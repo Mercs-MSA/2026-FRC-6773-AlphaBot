@@ -9,7 +9,6 @@ package frc.robot.subsystems;
 // import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 // import com.revrobotics.spark.SparkMax;
 
-// CTRE Phoenix 6 imports
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -29,6 +28,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private CANBus rio = new CANBus("rio");
   private final TalonFX climberMotor = new TalonFX(CLIMBER_MOTOR_ID, rio);
   private final PositionVoltage climberPosition = new PositionVoltage(0.0).withSlot(0);
+  PositionVoltage currentPosition = new PositionVoltage(0.0).withSlot(0);
 
   public ClimberSubsystem() {
     /*
@@ -54,14 +54,14 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void setClimber(double power) {
-    climberMotor.setControl(
-        new DutyCycleOut(power));  
+    currentPosition = currentPosition.withPosition(power);
+    climberMotor.setControl(currentPosition);
   }
 
  
   public void stop() {
-    climberMotor.setControl(
-        new DutyCycleOut(0));  
+    currentPosition = currentPosition.withPosition(0.0);
+    climberMotor.setControl(currentPosition);
   }
 
   @Override
