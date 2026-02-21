@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 // import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 // import com.revrobotics.spark.SparkMax;
 
+// CTRE Phoenix 6 imports
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
