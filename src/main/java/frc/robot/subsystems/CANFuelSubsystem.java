@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.CANBus;
 
 // SparkMax imports (commented out for now since we're using TalonFX instead)
 //import com.revrobotics.spark.SparkBase.PersistMode;
