@@ -12,6 +12,7 @@ package frc.robot.subsystems;
 //import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 //import com.revrobotics.spark.SparkMax;
 
+// CTRE Phoenix 6 imports
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -54,22 +55,35 @@ public class CANFuelSubsystem extends SubsystemBase {
         new SparkMax(INDEXER_MOTOR_ID, MotorType.kBrushed);
     */
 
-    TalonFXConfiguration launcherConfig = 
+    TalonFXConfiguration leftlauncherConfig = 
         new TalonFXConfiguration();
 
-    launcherConfig.CurrentLimits.SupplyCurrentLimit =
+    leftlauncherConfig.CurrentLimits.SupplyCurrentLimit =
         LAUNCHER_MOTOR_CURRENT_LIMIT;
-    launcherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    leftlauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    launcherConfig.MotorOutput.NeutralMode =
+    leftlauncherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    leftlauncherConfig.MotorOutput.NeutralMode =
         NeutralModeValue.Coast;
 
-    launcherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    leftIntakeLauncher.getConfigurator().apply(leftlauncherConfig);
 
-    leftIntakeLauncher.getConfigurator().apply(launcherConfig);
 
-    launcherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; 
-    rightIntakeLauncher.getConfigurator().apply(launcherConfig);
+    TalonFXConfiguration rightLauncherConfig = 
+        new TalonFXConfiguration();
+    
+    rightLauncherConfig.CurrentLimits.SupplyCurrentLimit =
+        LAUNCHER_MOTOR_CURRENT_LIMIT;
+    rightLauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    rightLauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    rightLauncherConfig.MotorOutput.NeutralMode =
+        NeutralModeValue.Coast;
+    
+    rightIntakeLauncher.getConfigurator().apply(rightLauncherConfig);
+
 
     TalonFXConfiguration indexerConfig =
         new TalonFXConfiguration();
@@ -131,6 +145,10 @@ public class CANFuelSubsystem extends SubsystemBase {
         dutyCycleOut.withOutput(0));
     indexer.setControl(
         dutyCycleOut.withOutput(0));
+  }
+
+  public double GetShooterVelocity() {
+    return rightIntakeLauncher.getVelocity().getValueAsDouble();
   }
 
   @Override
