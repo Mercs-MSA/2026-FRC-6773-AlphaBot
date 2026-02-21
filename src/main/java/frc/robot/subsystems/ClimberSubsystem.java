@@ -17,13 +17,16 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.CANBus;
 
 public class ClimberSubsystem extends SubsystemBase {
 
   // private final SparkMax climberMotor;
 
+  private final CANBus canBus = new CANBus("rio");   
+  
   private final TalonFX climberMotor =
-      new TalonFX(CLIMBER_MOTOR_ID, "rio");
+      new TalonFX(CLIMBER_MOTOR_ID, canBus);
 
 
   public ClimberSubsystem() {
