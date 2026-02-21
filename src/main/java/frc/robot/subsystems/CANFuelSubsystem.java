@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.CANBus;
 
 // SparkMax imports (commented out for now since we're using TalonFX instead)
 //import com.revrobotics.spark.SparkBase.PersistMode;
@@ -34,14 +33,16 @@ public class CANFuelSubsystem extends SubsystemBase {
   //private final SparkMax RightIntakeLauncher;
   //private final SparkMax Indexer;
 
+  private final CANBus canBus = new CANBus("rio");   
+
   private final TalonFX leftIntakeLauncher =
-      new TalonFX(LEFT_INTAKE_LAUNCHER_MOTOR_ID, "rio");
+      new TalonFX(LEFT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
 
   private final TalonFX rightIntakeLauncher =
-      new TalonFX(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, "rio");
+      new TalonFX(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
 
   private final TalonFX indexer =
-      new TalonFX(INDEXER_MOTOR_ID, "rio");
+      new TalonFX(INDEXER_MOTOR_ID, canBus);
 
   private final DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
   private final VelocityVoltage velocityVoltage =
