@@ -43,7 +43,7 @@ public class CANFuelSubsystem extends SubsystemBase {
   private final VelocityVoltage velocityVoltage =
       new VelocityVoltage(0).withSlot(0);
 
-  /** Creates a new CANFuelSubsystem. */
+  /* Creates a new CANFuelSubsystem. */
   public CANFuelSubsystem() {
     /*
     LeftIntakeLauncher =
@@ -54,7 +54,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         new SparkMax(INDEXER_MOTOR_ID, MotorType.kBrushed);
     */
 
-    TalonFXConfiguration launcherConfig =
+    TalonFXConfiguration launcherConfig = 
         new TalonFXConfiguration();
 
     launcherConfig.CurrentLimits.SupplyCurrentLimit =
