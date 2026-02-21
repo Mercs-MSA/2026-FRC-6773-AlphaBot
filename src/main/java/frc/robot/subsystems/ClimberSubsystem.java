@@ -1,44 +1,66 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkMax;
+// SparkMax imports (commented out for now since we're using TalonFX instead)
 
+// import com.revrobotics.spark.SparkBase.PersistMode;
+// import com.revrobotics.spark.SparkBase.ResetMode;
+// import com.revrobotics.spark.SparkLowLevel.MotorType;
+// import com.revrobotics.spark.config.SparkMaxConfig;
+// import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+// import com.revrobotics.spark.SparkMax;
+
+import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
+import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.ClimbConstatns.*;
-
 public class ClimberSubsystem extends SubsystemBase {
-  private final SparkMax climberMotor;
 
-  /** Creates a new CANBallSubsystem. */
+  // private final SparkMax climberMotor;
+
+  private final TalonFX climberMotor =
+      new TalonFX(CLIMBER_MOTOR_ID, "rio");
+
+
   public ClimberSubsystem() {
-    // create brushed motors for each of the motors on the launcher mechanism
+    /*
     climberMotor = new SparkMax(CLIMBER_MOTOR_ID, MotorType.kBrushed);
-
-    // create the configuration for the climb moter, set a current limit and apply
-    // the config to the controller
     SparkMaxConfig climbConfig = new SparkMaxConfig();
     climbConfig.smartCurrentLimit(CLIMBER_MOTOR_CURRENT_LIMIT);
     climbConfig.idleMode(IdleMode.kBrake);
     climberMotor.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    */
+
+    TalonFXConfiguration climbConfig = new TalonFXConfiguration();
+
+    
+    climbConfig.CurrentLimits.SupplyCurrentLimit =
+        CLIMBER_MOTOR_CURRENT_LIMIT;
+    climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    
+    climbConfig.MotorOutput.NeutralMode =
+        NeutralModeValue.Brake;
+
+    climberMotor.getConfigurator().apply(climbConfig);
   }
 
-  // A method to set the percentage of the climber
   public void setClimber(double power) {
-    climberMotor.set(power);
+    climberMotor.setControl(
+        new DutyCycleOut(power));  
   }
 
-  // A method to stop the climber
+ 
   public void stop() {
-    climberMotor.set(0);
+    climberMotor.setControl(
+        new DutyCycleOut(0));  
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+   
   }
 }
