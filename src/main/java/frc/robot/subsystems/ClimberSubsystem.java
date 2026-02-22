@@ -28,7 +28,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private CANBus rio = new CANBus("rio");
   private final TalonFX climberMotor = new TalonFX(CLIMBER_MOTOR_ID, rio);
   private final PositionVoltage climberPosition = new PositionVoltage(0.0).withSlot(0);
-  PositionVoltage currentPosition = new PositionVoltage(0.0).withSlot(0);
+  PositionVoltage currentPosition = new PositionVoltage(0.0).withSlot(0); // this is not necessary; the current position can be tracked with a double, if at all
 
   public ClimberSubsystem() {
     /*
@@ -46,21 +46,23 @@ public class ClimberSubsystem extends SubsystemBase {
         CLIMBER_MOTOR_CURRENT_LIMIT;
     climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    
+    // you must add more settings here for control loops. This includes at least proportional (P) gain. Look at the example CTRE Position control Java code to see what I mean
+
     climbConfig.MotorOutput.NeutralMode =
         NeutralModeValue.Brake;
 
     climberMotor.getConfigurator().apply(climbConfig);
   }
 
-  public void setClimber(double power) {
+  public void setClimber(double power) { // rename this input parameter to "position"
     currentPosition = currentPosition.withPosition(power);
     climberMotor.setControl(currentPosition);
   }
 
+  // add a method to return the position (as a double) of the climber 
  
   public void stop() {
-    currentPosition = currentPosition.withPosition(0.0);
+    currentPosition = currentPosition.withPosition(0.0); // this is very dangerous. It doesn't stop the motor, it would immediately send it back to the start. We don't need a stop method
     climberMotor.setControl(currentPosition);
   }
 
