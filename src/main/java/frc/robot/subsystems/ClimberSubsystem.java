@@ -12,7 +12,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
+//import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -56,7 +56,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public void setClimber(double power) {
     currentPosition = currentPosition.withPosition(power);
     climberMotor.setControl(currentPosition);
-  }
+  } 
 
  
   public void stop() {
