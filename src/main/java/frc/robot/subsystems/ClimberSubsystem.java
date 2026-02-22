@@ -12,6 +12,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+//Since we are not using duty cycle output, we don't need to import it
 //import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
