@@ -66,8 +66,8 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
-        joystick.povDown().onTrue(Commands.runOnce(() -> {climberSubsystem.goHome();}));
-        joystick.povUp().onTrue(Commands.runOnce(() -> {climberSubsystem.goLevelOne();}));
+        joystick.povDown().whileTrue(Commands.runOnce(() -> {climberSubsystem.goHome();}));
+        joystick.povUp().whileTrue(Commands.runOnce(() -> {climberSubsystem.goLevelOne();}));
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
