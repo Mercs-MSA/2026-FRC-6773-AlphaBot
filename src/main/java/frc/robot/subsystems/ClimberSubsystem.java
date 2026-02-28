@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-// SparkMax imports (commented out for now since we're using TalonFX instead)
+// SparkMax imports (commented out for now since we're using CTRE instead)
 
 // import com.revrobotics.spark.SparkBase.PersistMode;
 // import com.revrobotics.spark.SparkBase.ResetMode;
@@ -12,10 +12,11 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
 import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-//Since we are not using duty cycle output, we don't need to import it
-//import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+//Since we are not using duty cycle output, we don't need to import it
+//import com.ctre.phoenix6.controls.DutyCycleOut;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
