@@ -48,12 +48,10 @@ public class ClimberSubsystem extends SubsystemBase {
         CLIMBER_MOTOR_CURRENT_LIMIT;
     climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    // you must add more settings here for control loops. This includes at least proportional (P) gain. Look at the example CTRE Position control Java code to see what I mean
-
     var slot0Configs = new Slot0Configs();
-  slot0Configs.kP = 24; // An error of 0.5 rotations results in 12 V output
-  slot0Configs.kI = 0; // no output for integrated error
-  slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+    slot0Configs.kP = 24; // An error of 0.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0; // A velocity of 1 rps results in 0.1 V output
 
 climberMotor.getConfigurator().apply(slot0Configs);
     climbConfig.MotorOutput.NeutralMode =
@@ -70,13 +68,7 @@ climberMotor.getConfigurator().apply(slot0Configs);
   public double getClimberPosition() {
     return climberMotor.getPosition().getValueAsDouble();
   }
-
-  /* public void stop() {
-    currentPosition = currentPosition.withPosition(0.0); // this is very dangerous. It doesn't stop the motor, it would immediately send it back to the start. We don't need a stop method
-    climberMotor.setControl(currentPosition);
-  } */ 
- //We don't need a stop method since we are using position control. If we wanted to stop the motor, we would just set the position to the current position, which would cause the motor to hold its position right where it is currently (the desired climber height).
-
+  
   @Override
   public void periodic() {
 
