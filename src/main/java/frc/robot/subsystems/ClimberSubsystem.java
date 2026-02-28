@@ -64,19 +64,17 @@ climberMotor.getConfigurator().apply(slot0Configs);
     currentPosition = currentPosition.withPosition(position);
     climberMotor.setControl(currentPosition);
   } 
-
-   public void goHome() {
+  
+     public void goHome() {
     climberMotor.setControl(currentPosition.withPosition(0));
   }
 
    public void goLevelOne() {
     climberMotor.setControl(currentPosition.withPosition(15));
   }
- 
   public double getClimberPosition() {
     return climberMotor.getPosition().getValueAsDouble();
   }
-
 
 
   @Override
