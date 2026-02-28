@@ -1,11 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CANFuelSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
+import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_UP_PERCENT;
 
-import static frc.robot.Constants.ClimbConstatns.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ClimberSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ClimbUp extends Command {
@@ -32,10 +30,13 @@ public class ClimbUp extends Command {
   public void execute() {
   }
 
+
+  
+   
   // Called once the command ends or is interrupted. Stop the climber
   @Override
   public void end(boolean interrupted) {
-    climberSubsystem.stop();
+    climberSubsystem.setClimber(climberSubsystem.getClimberPosition());
   }
 
   // Returns true when the command should end.

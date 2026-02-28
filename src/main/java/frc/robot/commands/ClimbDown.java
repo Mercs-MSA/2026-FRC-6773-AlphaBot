@@ -35,7 +35,7 @@ public class ClimbDown extends Command {
   // Called once the command ends or is interrupted. Stop the climber
   @Override
   public void end(boolean interrupted) {
-    climberSubsystem.stop();
+    climberSubsystem.setClimber(climberSubsystem.getClimberPosition());
   }
 
   // Returns true when the command should end.

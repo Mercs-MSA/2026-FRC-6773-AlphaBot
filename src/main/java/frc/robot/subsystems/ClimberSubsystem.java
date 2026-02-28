@@ -68,7 +68,9 @@ climberMotor.getConfigurator().apply(slot0Configs);
   public double getClimberPosition() {
     return climberMotor.getPosition().getValueAsDouble();
   }
-  
+
+
+
   @Override
   public void periodic() {
 
