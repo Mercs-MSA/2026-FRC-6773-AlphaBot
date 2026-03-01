@@ -20,7 +20,9 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 //import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -32,6 +34,10 @@ public class ClimberSubsystem extends SubsystemBase {
   private final TalonFX climberMotor = new TalonFX(CLIMBER_MOTOR_ID, rio);
   private final PositionVoltage climberPosition = new PositionVoltage(0.0).withSlot(0);
   private PositionVoltage currentPosition = climberPosition;
+
+  //Simulation method
+  private final TalonFXSimState motorSim = climberMotor.getSimState();
+
   public ClimberSubsystem() {
     /*
     climberMotor = new SparkMax(CLIMBER_MOTOR_ID, MotorType.kBrushed);
@@ -42,35 +48,35 @@ public class ClimberSubsystem extends SubsystemBase {
     */
 
     TalonFXConfiguration climbConfig = new TalonFXConfiguration();
-
+    
     
     climbConfig.CurrentLimits.SupplyCurrentLimit =
         CLIMBER_MOTOR_CURRENT_LIMIT;
     climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kP = 24; // An error of 0.5 rotations results in 12 V output
-    slot0Configs.kI = 0; // no output for integrated error
-    slot0Configs.kD = 0; // A velocity of 1 rps results in 0.1 V output
-
-climberMotor.getConfigurator().apply(slot0Configs);
     climbConfig.MotorOutput.NeutralMode =
         NeutralModeValue.Brake;
 
+    
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kP = 24; // An error of 0.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+
     climberMotor.getConfigurator().apply(climbConfig);
+    climberMotor.getConfigurator().apply(slot0Configs);
   }
 
   public void setClimber(double position) { 
-    currentPosition = currentPosition.withPosition(position);
+    currentPosition = climberPosition.withPosition(position);
     climberMotor.setControl(currentPosition);
   } 
   
-     public void goHome() {
-    climberMotor.setControl(currentPosition.withPosition(0));
+  public void goHome() {
+    climberMotor.setControl(climberPosition.withPosition(0));
   }
 
-   public void goLevelOne() {
-    climberMotor.setControl(currentPosition.withPosition(15));
+  public void goLevelOne() {
+    climberMotor.setControl(climberPosition.withPosition(15));
   }
   public double getClimberPosition() {
     return climberMotor.getPosition().getValueAsDouble();
@@ -80,7 +86,24 @@ climberMotor.getConfigurator().apply(slot0Configs);
   @Override
   public void periodic() {
 
-    SmartDashboard.putNumber("climber position", climberMotor.getMotorVoltage().getValueAsDouble());
-   
+    SmartDashboard.putNumber("Climber Actual Position", climberMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Climber Target Position", climberPosition.Position);
+    SmartDashboard.putNumber("Climber Voltage", climberMotor.getMotorVoltage().getValueAsDouble());
   }
+
+@Override
+public void simulationPeriodic() {
+  //Set the bus voltage so the motor has power in the sim
+  motorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+  //Get the current position from the motor's encoder (StatusSignal)
+  double currentPos = climberMotor.getPosition().getValueAsDouble();
+
+  //Get the voltage being sent to the motor (Primitive double)
+  double appliedVoltage = motorSim.getMotorVoltage();
+
+  //Update the simulated position
+  //Add a small amount based on voltage to "fake" movement
+  motorSim.setRawRotorPosition(currentPos + (appliedVoltage * 0.01));
+}
 }
