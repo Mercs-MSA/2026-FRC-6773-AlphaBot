@@ -22,6 +22,8 @@ import frc.robot.subsystems.CANFuelSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import frc.robot.Constants.*;
+
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -68,6 +70,10 @@ public class RobotContainer {
         );
         joystick.povDown().onTrue(Commands.runOnce(climberSubsystem::goHome, climberSubsystem));
         joystick.povUp().onTrue(Commands.runOnce(climberSubsystem::goLevelOne, climberSubsystem));
+
+        // Intake Bindings
+        joystick.povLeft().onTrue(Commands.runOnce(() -> fuelSubsystem.setIntakeLauncherRoller(FuelConstants.INTAKE_INTAKING_PERCENT), fuelSubsystem));
+        joystick.povLeft().onFalse(Commands.runOnce(() -> fuelSubsystem.stop(), fuelSubsystem));
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
