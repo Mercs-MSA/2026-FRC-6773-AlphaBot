@@ -73,9 +73,11 @@ public class RobotContainer {
 
         // Intake Bindings
         joystick.povLeft().onTrue(Commands.runOnce(() -> fuelSubsystem.setIntakeLauncherRoller(FuelConstants.INTAKE_INTAKING_SPEED), fuelSubsystem));
-        // joystick.povLeft().onFalse(Commands.runOnce(() -> fuelSubsystem.stop(), fuelSubsystem));
         joystick.povRight().onTrue(Commands.runOnce(() -> fuelSubsystem.setIntakeLauncherRoller(FuelConstants.INTAKE_EJECT_SPEED), fuelSubsystem));
         joystick.povRight().or(joystick.povLeft()).onFalse(Commands.runOnce(() -> fuelSubsystem.stop(), fuelSubsystem));
+
+        // Shooter (placebo) bindings
+        
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->

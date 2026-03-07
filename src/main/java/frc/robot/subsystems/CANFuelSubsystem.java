@@ -34,6 +34,15 @@ public class CANFuelSubsystem extends SubsystemBase {
     // private final SparkMax RightIntakeLauncher;
     // private final SparkMax Indexer;
 
+    public enum fuelSubsystemState {
+        IDLE,
+        WARMING,
+        INTAKING,
+        SHOOTING,
+    }
+
+    private fuelSubsystemState currentState = fuelSubsystemState.IDLE;
+
     private final CANBus canBus = new CANBus("rio");
 
     private final TalonFX leftIntakeLauncher = new TalonFX(LEFT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
@@ -41,8 +50,6 @@ public class CANFuelSubsystem extends SubsystemBase {
     private final TalonFX rightIntakeLauncher = new TalonFX(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
 
     private final TalonFX indexer = new TalonFX(INDEXER_MOTOR_ID, canBus);
-
-    private final DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
     private final VelocityVoltage velocityVoltageLeft = new VelocityVoltage(0).withSlot(0);
     private final VelocityVoltage velocityVoltageRight = new VelocityVoltage(0).withSlot(0);
@@ -72,7 +79,7 @@ public class CANFuelSubsystem extends SubsystemBase {
 
         leftlauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        leftlauncherConfig.Slot0.kP = 20;
+        leftlauncherConfig.Slot0.kP = 0;
         leftlauncherConfig.Slot0.kI = 0.0;
         leftlauncherConfig.Slot0.kD = 0.0;
         leftlauncherConfig.Slot0.kV = 0.12;
@@ -88,7 +95,7 @@ public class CANFuelSubsystem extends SubsystemBase {
 
         rightLauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        rightLauncherConfig.Slot0.kP = 20;
+        rightLauncherConfig.Slot0.kP = 0;
         rightLauncherConfig.Slot0.kI = 0;
         rightLauncherConfig.Slot0.kD = 0;
         rightLauncherConfig.Slot0.kV = 0.12;
@@ -103,21 +110,12 @@ public class CANFuelSubsystem extends SubsystemBase {
         indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // Basic velocity PID (tune later)
-        indexerConfig.Slot0.kP = 0.1;
-        indexerConfig.Slot0.kI = 0.0;
-        indexerConfig.Slot0.kD = 0.0;
+        indexerConfig.Slot0.kP = 0;
+        indexerConfig.Slot0.kI = 0;
+        indexerConfig.Slot0.kD = 0;
         indexerConfig.Slot0.kV = 0.12;
 
         indexer.getConfigurator().apply(indexerConfig);
-
-        SmartDashboard.putNumber("Intaking feeder roller value",
-                INDEXER_INTAKING_PERCENT);
-        SmartDashboard.putNumber("Intaking intake roller value",
-                INTAKE_INTAKING_SPEED);
-        SmartDashboard.putNumber("Launching feeder roller value",
-                INDEXER_LAUNCHING_PERCENT);
-        SmartDashboard.putNumber("Launching launcher roller value",
-                LAUNCHING_LAUNCHER_PERCENT);
     }
 
     /*
@@ -144,21 +142,27 @@ public class CANFuelSubsystem extends SubsystemBase {
     }
 
     public double GetShooterVelocity() {
-        return rightIntakeLauncher.getVelocity().getValueAsDouble();
-    }
-
-    // Velocity is in Rotations Per Second (RPS)
-    public void setFeederRoller(double velocityRPS) {
-
-        // Old Spark version:
-        // Indexer.set(power);
-
-        indexer.setControl(
-                velocityVoltageIndex.withVelocity(velocityRPS));
+        return (rightIntakeLauncher.getVelocity().getValueAsDouble() + leftIntakeLauncher.getVelocity().getValueAsDouble()) / 2;
     }
 
     @Override
     public void periodic() {
+        // Arrest all motors in IDLE
+        if (currentState == fuelSubsystemState.IDLE) {
+            stop();
+        }
+
+        // Logic for warming up and shooting
+        if (currentState == fuelSubsystemState.WARMING) {
+            setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
+
+            // Break out into SHOOTING state if spinning fast enough - SHOOTING state can only be reached by first warming up
+            if (GetShooterVelocity() >= 20) {
+                currentState = fuelSubsystemState.SHOOTING;
+            }
+        }
+
+        switch (currentState) {}
 
         SmartDashboard.putNumber(
                 "Indexer Velocity (RPS)",

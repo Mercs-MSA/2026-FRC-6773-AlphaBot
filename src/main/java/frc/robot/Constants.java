@@ -34,8 +34,8 @@ public final class Constants {
 
   public static final class FuelConstants {
     // Motor controller IDs for Fuel Mechanism motors
-    public static final int LEFT_INTAKE_LAUNCHER_MOTOR_ID = 5;
-    public static final int RIGHT_INTAKE_LAUNCHER_MOTOR_ID = 29;
+    public static final int LEFT_INTAKE_LAUNCHER_MOTOR_ID = 36;
+    public static final int RIGHT_INTAKE_LAUNCHER_MOTOR_ID = 35;
     public static final int INDEXER_MOTOR_ID = 8;
 
     // Current limit for fuel mechanism motors.
@@ -43,15 +43,12 @@ public final class Constants {
     public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 80;
 
     // All values likely need to be tuned based on your robot
-    public static final double INDEXER_INTAKING_PERCENT = -.8; 
-    public static final double INDEXER_LAUNCHING_PERCENT = 0.6;
-    public static final double INDEXER_SPIN_UP_PRE_LAUNCH_PERCENT = -0.5;
+    public static final double INTAKE_INTAKING_SPEED = 7;
+    public static final double INTAKE_EJECT_SPEED = -7;
+    public static final double LAUNCHING_LAUNCHER_SPEED = 20;
 
-    public static final double INTAKE_INTAKING_SPEED = 1;
-    public static final double LAUNCHING_LAUNCHER_PERCENT = .85;
-    public static final double INTAKE_EJECT_SPEED = -1;
-
-    public static final double SPIN_UP_SECONDS = 0.75;
+    // *we probably won't use timed spinup and instead automate it
+    // public static final double SPIN_UP_SECONDS = 0.75;
   }
 
   public static final class ClimbConstatns {
