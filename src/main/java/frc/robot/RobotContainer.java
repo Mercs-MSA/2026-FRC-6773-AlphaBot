@@ -72,8 +72,10 @@ public class RobotContainer {
         joystick.povUp().onTrue(Commands.runOnce(climberSubsystem::goLevelOne, climberSubsystem));
 
         // Intake Bindings
-        joystick.povLeft().onTrue(Commands.runOnce(() -> fuelSubsystem.setIntakeLauncherRoller(FuelConstants.INTAKE_INTAKING_PERCENT), fuelSubsystem));
-        joystick.povLeft().onFalse(Commands.runOnce(() -> fuelSubsystem.stop(), fuelSubsystem));
+        joystick.povLeft().onTrue(Commands.runOnce(() -> fuelSubsystem.setIntakeLauncherRoller(FuelConstants.INTAKE_INTAKING_SPEED), fuelSubsystem));
+        // joystick.povLeft().onFalse(Commands.runOnce(() -> fuelSubsystem.stop(), fuelSubsystem));
+        joystick.povRight().onTrue(Commands.runOnce(() -> fuelSubsystem.setIntakeLauncherRoller(FuelConstants.INTAKE_EJECT_SPEED), fuelSubsystem));
+        joystick.povRight().or(joystick.povLeft()).onFalse(Commands.runOnce(() -> fuelSubsystem.stop(), fuelSubsystem));
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->

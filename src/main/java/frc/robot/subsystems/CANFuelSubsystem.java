@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-
 // SparkMax imports (commented out for now since we're using TalonFX instead)
 //import com.revrobotics.spark.SparkBase.PersistMode;
 //import com.revrobotics.spark.SparkBase.ResetMode;
@@ -21,7 +20,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,137 +30,166 @@ import static frc.robot.Constants.FuelConstants.*;
 
 public class CANFuelSubsystem extends SubsystemBase {
 
-  //private final SparkMax LeftIntakeLauncher;
-  //private final SparkMax RightIntakeLauncher;
-  //private final SparkMax Indexer;
+    // private final SparkMax LeftIntakeLauncher;
+    // private final SparkMax RightIntakeLauncher;
+    // private final SparkMax Indexer;
 
-  private final CANBus canBus = new CANBus("rio");   
+    private final CANBus canBus = new CANBus("rio");
 
-  private final TalonFX leftIntakeLauncher =
-      new TalonFX(LEFT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
+    private final TalonFX leftIntakeLauncher = new TalonFX(LEFT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
 
-  private final TalonFX rightIntakeLauncher =
-      new TalonFX(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
+    private final TalonFX rightIntakeLauncher = new TalonFX(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, canBus);
 
-  private final TalonFX indexer =
-      new TalonFX(INDEXER_MOTOR_ID, canBus);
+    private final TalonFX indexer = new TalonFX(INDEXER_MOTOR_ID, canBus);
 
-  private final DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
-  private final VelocityVoltage velocityVoltage =
-      new VelocityVoltage(0).withSlot(0);
+    private final DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
-  /* Creates a new CANFuelSubsystem. */
-  public CANFuelSubsystem() {
+    private final VelocityVoltage velocityVoltageLeft = new VelocityVoltage(0).withSlot(0);
+    private final VelocityVoltage velocityVoltageRight = new VelocityVoltage(0).withSlot(0);
+    private final VelocityVoltage velocityVoltageIndex = new VelocityVoltage(0).withSlot(0);
+
+    private final TalonFXSimState motorSimLeft = leftIntakeLauncher.getSimState();
+    private final TalonFXSimState motorSimRight = rightIntakeLauncher.getSimState();
+    private final TalonFXSimState motorSimIndex = indexer.getSimState();
+
+    /* Creates a new CANFuelSubsystem. */
+    public CANFuelSubsystem() {
+        /*
+         * LeftIntakeLauncher =
+         * new SparkMax(LEFT_INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
+         * RightIntakeLauncher =
+         * new SparkMax(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
+         * Indexer =
+         * new SparkMax(INDEXER_MOTOR_ID, MotorType.kBrushed);
+         */
+
+        TalonFXConfiguration leftlauncherConfig = new TalonFXConfiguration();
+
+        leftlauncherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
+        leftlauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        leftlauncherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        leftlauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        leftlauncherConfig.Slot0.kP = 20;
+        leftlauncherConfig.Slot0.kI = 0.0;
+        leftlauncherConfig.Slot0.kD = 0.0;
+        leftlauncherConfig.Slot0.kV = 0.12;
+
+        leftIntakeLauncher.getConfigurator().apply(leftlauncherConfig);
+
+        TalonFXConfiguration rightLauncherConfig = new TalonFXConfiguration();
+
+        rightLauncherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
+        rightLauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        rightLauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        rightLauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        rightLauncherConfig.Slot0.kP = 20;
+        rightLauncherConfig.Slot0.kI = 0;
+        rightLauncherConfig.Slot0.kD = 0;
+        rightLauncherConfig.Slot0.kV = 0.12;
+
+        rightIntakeLauncher.getConfigurator().apply(rightLauncherConfig);
+
+        TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
+
+        indexerConfig.CurrentLimits.SupplyCurrentLimit = INDEXER_MOTOR_CURRENT_LIMIT;
+        indexerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        // Basic velocity PID (tune later)
+        indexerConfig.Slot0.kP = 0.1;
+        indexerConfig.Slot0.kI = 0.0;
+        indexerConfig.Slot0.kD = 0.0;
+        indexerConfig.Slot0.kV = 0.12;
+
+        indexer.getConfigurator().apply(indexerConfig);
+
+        SmartDashboard.putNumber("Intaking feeder roller value",
+                INDEXER_INTAKING_PERCENT);
+        SmartDashboard.putNumber("Intaking intake roller value",
+                INTAKE_INTAKING_SPEED);
+        SmartDashboard.putNumber("Launching feeder roller value",
+                INDEXER_LAUNCHING_PERCENT);
+        SmartDashboard.putNumber("Launching launcher roller value",
+                LAUNCHING_LAUNCHER_PERCENT);
+    }
+
     /*
-    LeftIntakeLauncher =
-        new SparkMax(LEFT_INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
-    RightIntakeLauncher =
-        new SparkMax(RIGHT_INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
-    Indexer =
-        new SparkMax(INDEXER_MOTOR_ID, MotorType.kBrushed);
-    */
+     * public void setIntakeLauncherRoller(double power) {
+     * LeftIntakeLauncher.set(power);
+     * RightIntakeLauncher.set(power);
+     * }
+     */
 
-    TalonFXConfiguration leftlauncherConfig = 
-        new TalonFXConfiguration();
+    public void setIntakeLauncherRoller(double speed) {
+        leftIntakeLauncher.setControl(
+                velocityVoltageLeft.withVelocity(speed));
+        rightIntakeLauncher.setControl(
+                velocityVoltageRight.withVelocity(speed));
+    }
 
-    leftlauncherConfig.CurrentLimits.SupplyCurrentLimit =
-        LAUNCHER_MOTOR_CURRENT_LIMIT;
-    leftlauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    public void stop() {
+        leftIntakeLauncher.setControl(
+                velocityVoltageLeft.withVelocity(0));
+        rightIntakeLauncher.setControl(
+                velocityVoltageRight.withVelocity(0));
+        indexer.setControl(
+                velocityVoltageIndex.withVelocity(0));
+    }
 
-    leftlauncherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    public double GetShooterVelocity() {
+        return rightIntakeLauncher.getVelocity().getValueAsDouble();
+    }
 
-    leftlauncherConfig.MotorOutput.NeutralMode =
-        NeutralModeValue.Coast;
+    // Velocity is in Rotations Per Second (RPS)
+    public void setFeederRoller(double velocityRPS) {
 
-    leftIntakeLauncher.getConfigurator().apply(leftlauncherConfig);
+        // Old Spark version:
+        // Indexer.set(power);
 
+        indexer.setControl(
+                velocityVoltageIndex.withVelocity(velocityRPS));
+    }
 
-    TalonFXConfiguration rightLauncherConfig = 
-        new TalonFXConfiguration();
-    
-    rightLauncherConfig.CurrentLimits.SupplyCurrentLimit =
-        LAUNCHER_MOTOR_CURRENT_LIMIT;
-    rightLauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    @Override
+    public void periodic() {
 
-    rightLauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        SmartDashboard.putNumber(
+                "Indexer Velocity (RPS)",
+                indexer.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Intake velocity (left)",
+                leftIntakeLauncher.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Intake velocity (right)",
+                rightIntakeLauncher.getVelocity().getValueAsDouble());
+    }
 
-    rightLauncherConfig.MotorOutput.NeutralMode =
-        NeutralModeValue.Coast;
-    
-    rightIntakeLauncher.getConfigurator().apply(rightLauncherConfig);
+    @Override
+    public void simulationPeriodic() {
+        // Set the bus voltage so the motor has power in the sim
+        motorSimLeft.setSupplyVoltage(RobotController.getBatteryVoltage());
+        motorSimRight.setSupplyVoltage(RobotController.getBatteryVoltage());
+        motorSimIndex.setSupplyVoltage(RobotController.getBatteryVoltage());
 
+        // Get the current position from the motor's encoder (StatusSignal)
+        double currentVelLeft = leftIntakeLauncher.getVelocity().getValueAsDouble();
+        double currentVelRight = rightIntakeLauncher.getVelocity().getValueAsDouble();
+        double currentVelIndex = indexer.getVelocity().getValueAsDouble();
 
-    TalonFXConfiguration indexerConfig =
-        new TalonFXConfiguration();
+        // Get the voltage being sent to the motor (Primitive double)
+        double appliedVoltageLeft = motorSimLeft.getMotorVoltage();
+        double appliedVoltageRight = motorSimRight.getMotorVoltage();
+        double appliedVoltageIndex = motorSimIndex.getMotorVoltage();
 
-    indexerConfig.CurrentLimits.SupplyCurrentLimit =
-        INDEXER_MOTOR_CURRENT_LIMIT;
-    indexerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-
-    indexerConfig.MotorOutput.NeutralMode =
-        NeutralModeValue.Brake;
-
-    // Basic velocity PID (tune later)
-    indexerConfig.Slot0.kP = 0.1;
-    indexerConfig.Slot0.kI = 0.0;
-    indexerConfig.Slot0.kD = 0.0;
-    indexerConfig.Slot0.kV = 0.12;
-
-    indexer.getConfigurator().apply(indexerConfig);
-
-    SmartDashboard.putNumber("Intaking feeder roller value",
-        INDEXER_INTAKING_PERCENT);
-    SmartDashboard.putNumber("Intaking intake roller value",
-        INTAKE_INTAKING_PERCENT);
-    SmartDashboard.putNumber("Launching feeder roller value",
-        INDEXER_LAUNCHING_PERCENT);
-    SmartDashboard.putNumber("Launching launcher roller value",
-        LAUNCHING_LAUNCHER_PERCENT);
-  }
-
-  /*
-  public void setIntakeLauncherRoller(double power) {
-    LeftIntakeLauncher.set(power);
-    RightIntakeLauncher.set(power);
-  }
-  */
-
-  public void setIntakeLauncherRoller(double power) {
-    leftIntakeLauncher.setControl(
-        dutyCycleOut.withOutput(power));
-    rightIntakeLauncher.setControl(
-        dutyCycleOut.withOutput(power));
-  }
-
-  // Velocity is in Rotations Per Second (RPS)
-  public void setFeederRoller(double velocityRPS) {
-
-    // Old Spark version:
-    //Indexer.set(power);
-
-    indexer.setControl(
-        velocityVoltage.withVelocity(velocityRPS));
-  }
-
-  public void stop() {
-
-    leftIntakeLauncher.setControl(
-        dutyCycleOut.withOutput(0));
-    rightIntakeLauncher.setControl(
-        dutyCycleOut.withOutput(0));
-    indexer.setControl(
-        dutyCycleOut.withOutput(0));
-  }
-
-  public double GetShooterVelocity() {
-    return rightIntakeLauncher.getVelocity().getValueAsDouble();
-  }
-
-  @Override
-  public void periodic() {
-
-    SmartDashboard.putNumber(
-        "Indexer Velocity (RPS)",
-        indexer.getVelocity().getValueAsDouble());
-  }
+        // Update the simulated position
+        // Add a small amount based on voltage to "fake" movement
+        motorSimLeft.setRotorVelocity(currentVelLeft + (appliedVoltageLeft * 0.05));
+        motorSimRight.setRotorVelocity(currentVelRight + (appliedVoltageRight * 0.05));
+        motorSimIndex.setRotorVelocity(currentVelIndex + (appliedVoltageIndex * 0.05));
+    }
 }
