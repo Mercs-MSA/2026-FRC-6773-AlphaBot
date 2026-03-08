@@ -21,6 +21,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANFuelSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CANFuelSubsystem.fuelSubsystemState;
 
 import frc.robot.Constants.*;
 
@@ -68,6 +69,8 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
+
+        // Climber Bindings
         joystick.povDown().onTrue(Commands.runOnce(climberSubsystem::goHome, climberSubsystem));
         joystick.povUp().onTrue(Commands.runOnce(climberSubsystem::goLevelOne, climberSubsystem));
 
