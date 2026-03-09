@@ -148,6 +148,12 @@ public class CANFuelSubsystem extends SubsystemBase {
         }
     }
 
+    public void cancelShooting() {
+        if (currentState == fuelSubsystemState.SHOOTING || currentState == fuelSubsystemState.WARMING) {
+            currentState = fuelSubsystemState.IDLE;
+        }
+    }
+
     private void stop() {
         leftIntakeLauncher.setControl(
                 velocityVoltageLeft.withVelocity(0));

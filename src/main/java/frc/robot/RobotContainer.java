@@ -80,7 +80,18 @@ public class RobotContainer {
         joystick.povRight().or(joystick.povLeft()).onFalse(Commands.runOnce(() -> fuelSubsystem.stateControl(fuelSubsystemState.IDLE), fuelSubsystem));
 
         // Shooter (placebo) bindings
-        
+        // Start warming up when holding down X button. If allowed to warm up, the robot will autonomously shift into shooting mode. If you let go, everything should stop.
+        joystick.x().onTrue(
+            Commands.runOnce(
+                () -> fuelSubsystem.stateControl(fuelSubsystemState.WARMING),
+                fuelSubsystem
+            )
+        ).onFalse(
+            Commands.runOnce(
+                () -> fuelSubsystem.cancelShooting(),
+                fuelSubsystem
+            )
+        );
         
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
