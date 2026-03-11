@@ -82,7 +82,7 @@ public class RobotContainer {
         // Shooter (placebo) bindings
         // Start warming up when holding down X button. If allowed to warm up, the robot will autonomously shift into shooting mode. If you let go, everything should stop.
         joystick.x().onTrue(
-            Commands.runOnce(
+            Commands.runOnce( // DPM - If you are in WARMING already and the robot is trying to automatically go to shooting, this will tell the robot to go back to WARMING. It may still work, but may also cause some wierd behavior. In your subsystem, make it so that the State stays in SHOOTING, if COMMANDED TO WARMING while in SHOOTING
                 () -> fuelSubsystem.stateControl(fuelSubsystemState.WARMING),
                 fuelSubsystem
             )
