@@ -225,6 +225,7 @@ public class CANFuelSubsystem extends SubsystemBase {
                 leftIntakeLauncher.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake velocity (right)",
                 rightIntakeLauncher.getVelocity().getValueAsDouble());
+        SmartDashboard.putString("State", currentState.name());
     }
 
     @Override
