@@ -142,7 +142,10 @@ public class CANFuelSubsystem extends SubsystemBase {
     public void stateControl(fuelSubsystemState state) {
         if (state == fuelSubsystemState.SHOOTING) {
             System.out.println("No ow ow it hurts no I can't change to that state here no ow");
-        } else
+        } else if (currentState == fuelSubsystemState.SHOOTING && state == fuelSubsystemState.WARMING)
+        {
+            System.out.println("No I'm already doing that");
+        }
         {
             currentState = state;
         }
@@ -175,6 +178,7 @@ public class CANFuelSubsystem extends SubsystemBase {
             case IDLE:
                 // Arrest all motors while IDLE
                 stop();
+                break;
             case WARMING:
                 // WARMING up motors (spin up flywheel, wait for it, and switch states)
                 setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
@@ -187,18 +191,21 @@ public class CANFuelSubsystem extends SubsystemBase {
 
                 // Arrest indexer (just in case)
                 setIndexer(0);
+                break;
             case SHOOTING:
                 // Activate indexer to funnel balls into the flywheel
                 setIndexer(INDEXER_TRANSFER_SPEED);
 
                 // Keep the shooter motor active (just in case)
                 setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
+                break;
             case INTAKING:
                 // Arrest indexer (just in case)
                 setIndexer(0);
 
                 // Use slower intaking speed
                 setIntakeLauncherRoller(INTAKE_INTAKING_SPEED);
+                break;
             case EJECTING:
                 // Intake but backwards
                 // Arrest indexer (just in case)
@@ -206,6 +213,9 @@ public class CANFuelSubsystem extends SubsystemBase {
 
                 // Use eject speed
                 setIntakeLauncherRoller(INTAKE_EJECT_SPEED);
+                break;
+            default:
+                stop();
         }
 
         SmartDashboard.putNumber(
