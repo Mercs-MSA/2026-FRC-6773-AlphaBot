@@ -38,6 +38,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         IDLE,
         WARMING,
         INTAKING,
+        EJECTING,
         SHOOTING,
     }
 
@@ -125,14 +126,38 @@ public class CANFuelSubsystem extends SubsystemBase {
      * }
      */
 
-    public void setIntakeLauncherRoller(double speed) {
+    private void setIntakeLauncherRoller(double speed) {
         leftIntakeLauncher.setControl(
                 velocityVoltageLeft.withVelocity(speed));
         rightIntakeLauncher.setControl(
                 velocityVoltageRight.withVelocity(speed));
     }
 
-    public void stop() {
+    private void setIndexer(double speed) {
+        indexer.setControl(
+            velocityVoltageIndex.withVelocity(speed)
+        );
+    }
+
+    public void stateControl(fuelSubsystemState state) {
+        if (state == fuelSubsystemState.SHOOTING) {
+            System.out.println("No ow ow it hurts no I can't change to that state here no ow");
+        } else if (currentState == fuelSubsystemState.SHOOTING && state == fuelSubsystemState.WARMING)
+        {
+            System.out.println("No I'm already doing that");
+        }
+        {
+            currentState = state;
+        }
+    }
+
+    public void cancelShooting() {
+        if (currentState == fuelSubsystemState.SHOOTING || currentState == fuelSubsystemState.WARMING) {
+            currentState = fuelSubsystemState.IDLE;
+        }
+    }
+
+    private void stop() {
         leftIntakeLauncher.setControl(
                 velocityVoltageLeft.withVelocity(0));
         rightIntakeLauncher.setControl(
@@ -141,28 +166,57 @@ public class CANFuelSubsystem extends SubsystemBase {
                 velocityVoltageIndex.withVelocity(0));
     }
 
-    public double GetShooterVelocity() {
-        return (rightIntakeLauncher.getVelocity().getValueAsDouble() + leftIntakeLauncher.getVelocity().getValueAsDouble()) / 2;
+    private double GetShooterVelocity() {
+        return (rightIntakeLauncher.getVelocity().getValueAsDouble()
+                + leftIntakeLauncher.getVelocity().getValueAsDouble()) / 2;
     }
 
     @Override
     public void periodic() {
-        // Arrest all motors in IDLE
-        if (currentState == fuelSubsystemState.IDLE) {
-            stop();
+        // Our state machine, my pride and joy, beautiful summer child
+        switch (currentState) {
+            case IDLE:
+                // Arrest all motors while IDLE
+                stop();
+                break;
+            case WARMING:
+                // WARMING up motors (spin up flywheel, wait for it, and switch states)
+                setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
+
+                // If speed is right, break out into SHOOTING mode
+                // SHOOTING mode normally can't be accessed except by first warming up
+                if (GetShooterVelocity() >= 20) {
+                    currentState = fuelSubsystemState.SHOOTING;
+                }
+
+                // Arrest indexer (just in case)
+                setIndexer(0);
+                break;
+            case SHOOTING:
+                // Activate indexer to funnel balls into the flywheel
+                setIndexer(INDEXER_TRANSFER_SPEED);
+
+                // Keep the shooter motor active (just in case)
+                setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
+                break;
+            case INTAKING:
+                // Arrest indexer (just in case)
+                setIndexer(0);
+
+                // Use slower intaking speed
+                setIntakeLauncherRoller(INTAKE_INTAKING_SPEED);
+                break;
+            case EJECTING:
+                // Intake but backwards
+                // Arrest indexer (just in case)
+                setIndexer(0);
+
+                // Use eject speed
+                setIntakeLauncherRoller(INTAKE_EJECT_SPEED);
+                break;
+            default:
+                stop();
         }
-
-        // Logic for warming up and shooting
-        if (currentState == fuelSubsystemState.WARMING) {
-            setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
-
-            // Break out into SHOOTING state if spinning fast enough - SHOOTING state can only be reached by first warming up
-            if (GetShooterVelocity() >= 20) {
-                currentState = fuelSubsystemState.SHOOTING;
-            }
-        }
-
-        switch (currentState) {}
 
         SmartDashboard.putNumber(
                 "Indexer Velocity (RPS)",
@@ -171,6 +225,7 @@ public class CANFuelSubsystem extends SubsystemBase {
                 leftIntakeLauncher.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake velocity (right)",
                 rightIntakeLauncher.getVelocity().getValueAsDouble());
+        SmartDashboard.putString("State", currentState.name());
     }
 
     @Override
