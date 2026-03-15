@@ -29,6 +29,7 @@ import frc.robot.subsystems.CANFuelSubsystem.fuelSubsystemState;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.Constants.*;
 
@@ -123,6 +124,9 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
+
+        testController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+        testController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
 
         //Drivetrain SysId
         testController.back().and(testController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
