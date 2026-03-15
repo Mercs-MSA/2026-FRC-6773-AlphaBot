@@ -197,16 +197,37 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 0,
+      "name": "startIntake",
+      "waypointRelativePos": 2.0040513166779004,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "startIntake"
+        }
+      }
     },
     {
-      "name": "",
-      "waypointRelativePos": 0,
+      "name": "stopIntake",
+      "waypointRelativePos": 3.970290344361897,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "stopIntake"
+        }
+      }
+    },
+    {
+      "name": "startWarming",
+      "waypointRelativePos": 4.329507089804207,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "startWarming"
+        }
+      }
     }
   ],
   "globalConstraints": {

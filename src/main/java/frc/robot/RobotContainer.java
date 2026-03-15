@@ -26,6 +26,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CANFuelSubsystem.fuelSubsystemState;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import frc.robot.Constants.*;
@@ -54,6 +55,15 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        
+        //Initialize the named commands for PathPlanner.
+        NamedCommands.registerCommand("startIntake", Commands.runOnce(() -> fuelSubsystem.stateControl(fuelSubsystemState.INTAKING), fuelSubsystem));
+        NamedCommands.registerCommand("stopIntake", Commands.runOnce(() -> fuelSubsystem.stateControl(fuelSubsystemState.IDLE), fuelSubsystem));
+        NamedCommands.registerCommand("startWarming", Commands.runOnce(() -> fuelSubsystem.stateControl(fuelSubsystemState.WARMING), fuelSubsystem));
+        NamedCommands.registerCommand("stopShooting", Commands.runOnce(() -> fuelSubsystem.stateControl(fuelSubsystemState.IDLE), fuelSubsystem));
+        NamedCommands.registerCommand("leveOneClimb", Commands.runOnce(() -> climberSubsystem.goLevelOne(), climberSubsystem));
+        NamedCommands.registerCommand("stopClimb", Commands.runOnce(() -> climberSubsystem.goHome(), climberSubsystem));
+
         autoChooser = AutoBuilder.buildAutoChooser("Tests"); //the param inside buildAutoChooser is <fileName>.auto;
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
