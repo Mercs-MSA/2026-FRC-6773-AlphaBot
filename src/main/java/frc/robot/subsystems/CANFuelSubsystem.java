@@ -12,19 +12,25 @@ package frc.robot.subsystems;
 //import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 //import com.revrobotics.spark.SparkMax;
 
+import static edu.wpi.first.units.Units.*;
+
 // CTRE Phoenix 6 imports
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-//import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static frc.robot.Constants.FuelConstants.*;
 
@@ -56,9 +62,59 @@ public class CANFuelSubsystem extends SubsystemBase {
     private final VelocityVoltage velocityVoltageRight = new VelocityVoltage(0).withSlot(0);
     private final VelocityVoltage velocityVoltageIndex = new VelocityVoltage(0).withSlot(0);
 
+    private final VoltageOut m_sysIdControl = new VoltageOut(0);
+
     private final TalonFXSimState motorSimLeft = leftIntakeLauncher.getSimState();
     private final TalonFXSimState motorSimRight = rightIntakeLauncher.getSimState();
     private final TalonFXSimState motorSimIndex = indexer.getSimState();
+
+    private final SysIdRoutine m_SysIdRoutineLeftIntakeLauncher =
+        new SysIdRoutine (
+            new SysIdRoutine.Config(
+                null,
+                Volts.of(4),
+                null,
+
+                state -> SignalLogger.writeString("leftIntakeLauncherState", state.toString())
+            ),
+            new SysIdRoutine.Mechanism(
+                volts -> leftIntakeLauncher.setControl(m_sysIdControl.withOutput(volts)),
+                null, 
+                this
+            )
+        );
+
+    private final SysIdRoutine m_SysIdRoutineRightIntakeLauncher =
+        new SysIdRoutine (
+            new SysIdRoutine.Config(
+                null,
+                Volts.of(4),
+                null,
+
+                state -> SignalLogger.writeString("rightIntakeLauncherState", state.toString())
+            ),
+            new SysIdRoutine.Mechanism(
+                volts -> rightIntakeLauncher.setControl(m_sysIdControl.withOutput(volts)),
+                null, 
+                this
+            )
+        );
+
+        private final SysIdRoutine m_SysIdRoutineIndexer =
+        new SysIdRoutine (
+            new SysIdRoutine.Config(
+                null,
+                Volts.of(4),
+                null,
+
+                state -> SignalLogger.writeString("indexerState", state.toString())
+            ),
+            new SysIdRoutine.Mechanism(
+                volts -> indexer.setControl(m_sysIdControl.withOutput(volts)),
+                null, 
+                this
+            )
+        );
 
     /* Creates a new CANFuelSubsystem. */
     public CANFuelSubsystem() {
@@ -117,6 +173,54 @@ public class CANFuelSubsystem extends SubsystemBase {
         indexerConfig.Slot0.kV = 0.12;
 
         indexer.getConfigurator().apply(indexerConfig);
+
+        // Speed up signals for better characterization data
+        BaseStatusSignal.setUpdateFrequencyForAll(250,
+            leftIntakeLauncher.getPosition(),
+            leftIntakeLauncher.getVelocity(),
+            leftIntakeLauncher.getMotorVoltage());
+
+        BaseStatusSignal.setUpdateFrequencyForAll(250,
+            rightIntakeLauncher.getPosition(),
+            rightIntakeLauncher.getVelocity(),
+            rightIntakeLauncher.getMotorVoltage());
+
+        BaseStatusSignal.setUpdateFrequencyForAll(250,
+            indexer.getPosition(),
+            indexer.getVelocity(),
+            indexer.getMotorVoltage());
+        
+        // Optimize out the other signals, since they're not useful for SysId
+        leftIntakeLauncher.optimizeBusUtilization();
+        rightIntakeLauncher.optimizeBusUtilization();
+        indexer.optimizeBusUtilization();
+
+        //Start the signal logger
+        SignalLogger.start();
+
+    }
+
+    //Quasistatic command for all 3 motors
+    public Command leftIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutineLeftIntakeLauncher.quasistatic(direction);
+    }
+    public Command rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutineRightIntakeLauncher.quasistatic(direction);
+    }
+    public Command indexerSysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutineIndexer.quasistatic(direction);
+    }
+
+
+    //Dynamic command for all 3 motors
+    public Command leftIndexerLauncherSysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutineLeftIntakeLauncher.dynamic(direction);
+    }
+    public Command rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutineRightIntakeLauncher.dynamic(direction);
+    }
+    public Command indexerSysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_SysIdRoutineIndexer.dynamic(direction);
     }
 
     /*
