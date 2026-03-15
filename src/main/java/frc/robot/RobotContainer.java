@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +32,7 @@ import frc.robot.Constants.*;
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private Pose2d handEnteredStartPose = new Pose2d(0.381, 7.483, new Rotation2d(Math.toRadians(0.0))); // this allows you to manually change the robots starting pose. I set the value to match the Tests path in pathplanner
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -52,6 +54,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        drivetrain.resetPose(handEnteredStartPose); // this forces the robot to think its in a particular starting pose
         autoChooser = AutoBuilder.buildAutoChooser("Tests"); //the param inside buildAutoChooser is <fileName>.auto;
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
