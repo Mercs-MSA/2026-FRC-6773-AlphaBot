@@ -244,9 +244,7 @@ public class CANFuelSubsystem extends SubsystemBase {
     }
 
     public void stateControl(fuelSubsystemState state) {
-        if (state == fuelSubsystemState.SHOOTING) {
-            System.out.println("No ow ow it hurts no I can't change to that state here no ow");
-        } else if (currentState == fuelSubsystemState.SHOOTING && state == fuelSubsystemState.WARMING)
+        if (currentState == fuelSubsystemState.SHOOTING && state == fuelSubsystemState.WARMING)
         {
             System.out.println("No I'm already doing that");
         }
