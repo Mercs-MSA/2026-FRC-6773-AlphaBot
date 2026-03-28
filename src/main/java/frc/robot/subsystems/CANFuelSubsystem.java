@@ -72,7 +72,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         new SysIdRoutine (
             new SysIdRoutine.Config(
                 null,
-                Volts.of(4),
+                Volts.of(3),
                 null,
 
                 state -> SignalLogger.writeString("leftIntakeLauncherState", state.toString())
@@ -88,7 +88,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         new SysIdRoutine (
             new SysIdRoutine.Config(
                 null,
-                Volts.of(4),
+                Volts.of(3),
                 null,
 
                 state -> SignalLogger.writeString("rightIntakeLauncherState", state.toString())
@@ -136,10 +136,14 @@ public class CANFuelSubsystem extends SubsystemBase {
 
         leftlauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        leftlauncherConfig.Slot0.kP = 0;
+        leftlauncherConfig.Slot0.kP = 0.0; 
         leftlauncherConfig.Slot0.kI = 0.0;
         leftlauncherConfig.Slot0.kD = 0.0;
-        leftlauncherConfig.Slot0.kV = 0.12;
+
+        leftlauncherConfig.Slot0.kS = 0.26641;
+        leftlauncherConfig.Slot0.kV = 0.089141;
+        leftlauncherConfig.Slot0.kA = 0.0056436;
+
 
         leftIntakeLauncher.getConfigurator().apply(leftlauncherConfig);
 
