@@ -141,16 +141,16 @@ public class RobotContainer {
         testController.start().and(testController.b()).whileTrue(fuelSubsystem.leftIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         
         //Right Indexer Launcher SysId
-        testController.leftBumper().and(testController.a()).whileTrue(fuelSubsystem.rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kForward));
-        testController.leftBumper().and(testController.b()).whileTrue(fuelSubsystem.rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kReverse));
-        testController.rightBumper().and(testController.a()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        testController.rightBumper().and(testController.b()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        testController.povUp().and(testController.a()).whileTrue(fuelSubsystem.rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kForward));
+        testController.povUp().and(testController.b()).whileTrue(fuelSubsystem.rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kReverse));
+        testController.povDown().and(testController.a()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        testController.povDown().and(testController.b()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
         //Indexer SysId
-        testController.leftBumper().and(testController.x()).whileTrue(fuelSubsystem.indexerSysIdDynamic(SysIdRoutine.Direction.kForward));
-        testController.leftBumper().and(testController.y()).whileTrue(fuelSubsystem.indexerSysIdDynamic(SysIdRoutine.Direction.kReverse));
-        testController.rightBumper().and(testController.x()).whileTrue(fuelSubsystem.indexerSysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        testController.rightBumper().and(testController.y()).whileTrue(fuelSubsystem.indexerSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        testController.povUp().and(testController.x()).whileTrue(fuelSubsystem.indexerSysIdDynamic(SysIdRoutine.Direction.kForward));
+        testController.povUp().and(testController.y()).whileTrue(fuelSubsystem.indexerSysIdDynamic(SysIdRoutine.Direction.kReverse));
+        testController.povDown().and(testController.x()).whileTrue(fuelSubsystem.indexerSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        testController.povDown().and(testController.y()).whileTrue(fuelSubsystem.indexerSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
