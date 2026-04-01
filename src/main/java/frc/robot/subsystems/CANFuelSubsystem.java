@@ -306,16 +306,16 @@ public class CANFuelSubsystem extends SubsystemBase {
                 setIntakeLauncherRoller(LAUNCHING_LAUNCHER_SPEED);
                 break;
             case INTAKING:
-                // Arrest indexer (just in case)
-                setIndexer(0);
+                // Move indexer at intaking speed (just in case)
+                setIndexer(INDEXER_INTAKING_SPEED);
 
                 // Use slower intaking speed
                 setIntakeLauncherRoller(INTAKE_INTAKING_SPEED);
                 break;
             case EJECTING:
                 // Intake but backwards
-                // Arrest indexer (just in case)
-                setIndexer(0);
+                // Move indexer at ejecting speed (just in case)
+                setIndexer(INDEXER_EJECTING_SPEED);
 
                 // Use eject speed
                 setIntakeLauncherRoller(INTAKE_EJECT_SPEED);

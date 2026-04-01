@@ -46,7 +46,9 @@ public final class Constants {
     public static final double INTAKE_INTAKING_SPEED = 7;
     public static final double INTAKE_EJECT_SPEED = -7;
     public static final double LAUNCHING_LAUNCHER_SPEED = 20;
-    public static final double INDEXER_TRANSFER_SPEED = 6;
+    public static final double INDEXER_TRANSFER_SPEED = 7;
+    public static final double INDEXER_INTAKING_SPEED = -7;
+    public static final double INDEXER_EJECTING_SPEED = 7;
 
     // *we probably won't use timed spinup and instead automate it
     // public static final double SPIN_UP_SECONDS = 0.75;
