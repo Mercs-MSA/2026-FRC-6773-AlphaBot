@@ -9,8 +9,8 @@ package frc.robot.subsystems;
 // import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 // import com.revrobotics.spark.SparkMax;
 
-import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_CURRENT_LIMIT;
-import static frc.robot.Constants.ClimbConstatns.CLIMBER_MOTOR_ID;
+import static frc.robot.Constants.ClimbConstants.CLIMBER_MOTOR_CURRENT_LIMIT;
+import static frc.robot.Constants.ClimbConstants.CLIMBER_MOTOR_ID;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.Slot0Configs;

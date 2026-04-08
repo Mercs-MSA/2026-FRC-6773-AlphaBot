@@ -54,7 +54,7 @@ public final class Constants {
     // public static final double SPIN_UP_SECONDS = 0.75;
   }
 
-  public static final class ClimbConstatns {
+  public static final class ClimbConstants {
     // Motor controller IDs for Climb motor
     public static final int CLIMBER_MOTOR_ID = 18;
 
