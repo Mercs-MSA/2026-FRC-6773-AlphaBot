@@ -132,7 +132,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         leftlauncherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
         leftlauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        leftlauncherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leftlauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         leftlauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -152,7 +152,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         rightLauncherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
         rightLauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        rightLauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        rightLauncherConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         rightLauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
