@@ -43,7 +43,7 @@ public final class Constants {
     public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 80;
 
     // All values likely need to be tuned based on your robot
-    public static final double INTAKE_INTAKING_SPEED = 7;
+    public static final double INTAKE_INTAKING_SPEED = 7; //test comment
     public static final double INTAKE_EJECT_SPEED = -7;
     public static final double LAUNCHING_LAUNCHER_SPEED = 20;
     public static final double INDEXER_TRANSFER_SPEED = 7;
