@@ -11,28 +11,36 @@ package frc.robot.subsystems;
 //import com.revrobotics.spark.config.SparkMaxConfig;
 //import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 //import com.revrobotics.spark.SparkMax;
+import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.FuelConstants.INDEXER_EJECTING_SPEED;
+import static frc.robot.Constants.FuelConstants.INDEXER_INTAKING_SPEED;
+import static frc.robot.Constants.FuelConstants.INDEXER_MOTOR_CURRENT_LIMIT;
+import static frc.robot.Constants.FuelConstants.INDEXER_MOTOR_ID;
+import static frc.robot.Constants.FuelConstants.INDEXER_TRANSFER_SPEED;
+import static frc.robot.Constants.FuelConstants.INTAKE_EJECT_SPEED;
+import static frc.robot.Constants.FuelConstants.INTAKE_INTAKING_SPEED;
+import static frc.robot.Constants.FuelConstants.LAUNCHER_MOTOR_CURRENT_LIMIT;
+import static frc.robot.Constants.FuelConstants.LAUNCHING_LAUNCHER_SPEED;
+import static frc.robot.Constants.FuelConstants.LEFT_INTAKE_LAUNCHER_MOTOR_ID;
+import static frc.robot.Constants.FuelConstants.RIGHT_INTAKE_LAUNCHER_MOTOR_ID;
 
-import static edu.wpi.first.units.Units.*;
-
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.SignalLogger;
 // CTRE Phoenix 6 imports
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import static frc.robot.Constants.FuelConstants.*;
 
 public class CANFuelSubsystem extends SubsystemBase {
 
@@ -127,25 +135,25 @@ public class CANFuelSubsystem extends SubsystemBase {
          * new SparkMax(INDEXER_MOTOR_ID, MotorType.kBrushed);
          */
 
-        TalonFXConfiguration leftlauncherConfig = new TalonFXConfiguration();
+        TalonFXConfiguration leftLauncherConfig = new TalonFXConfiguration();
 
-        leftlauncherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
-        leftlauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        leftLauncherConfig.CurrentLimits.SupplyCurrentLimit = LAUNCHER_MOTOR_CURRENT_LIMIT;
+        leftLauncherConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        leftlauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        leftLauncherConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        leftlauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        leftLauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        leftlauncherConfig.Slot0.kP = 0.0; 
-        leftlauncherConfig.Slot0.kI = 0.0;
-        leftlauncherConfig.Slot0.kD = 0.0;
+        leftLauncherConfig.Slot0.kP = 0.0; 
+        leftLauncherConfig.Slot0.kI = 0.0;
+        leftLauncherConfig.Slot0.kD = 0.0;
 
-        leftlauncherConfig.Slot0.kS = 0.26641;
-        leftlauncherConfig.Slot0.kV = 0.089141;
-        leftlauncherConfig.Slot0.kA = 0.0056436;
+        leftLauncherConfig.Slot0.kS = 0.26641;
+        leftLauncherConfig.Slot0.kV = 0.089141;
+        leftLauncherConfig.Slot0.kA = 0.0056436;
 
 
-        leftIntakeLauncher.getConfigurator().apply(leftlauncherConfig);
+        leftIntakeLauncher.getConfigurator().apply(leftLauncherConfig);
 
         TalonFXConfiguration rightLauncherConfig = new TalonFXConfiguration();
 
@@ -156,10 +164,13 @@ public class CANFuelSubsystem extends SubsystemBase {
 
         rightLauncherConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        rightLauncherConfig.Slot0.kP = 0;
-        rightLauncherConfig.Slot0.kI = 0;
-        rightLauncherConfig.Slot0.kD = 0;
-        rightLauncherConfig.Slot0.kV = 0.12;
+        rightLauncherConfig.Slot0.kP = 0.0; 
+        rightLauncherConfig.Slot0.kI = 0.0;
+        rightLauncherConfig.Slot0.kD = 0.0;
+
+        rightLauncherConfig.Slot0.kS = 0.26641;
+        rightLauncherConfig.Slot0.kV = 0.089141;
+        rightLauncherConfig.Slot0.kA = 0.0056436;
 
         rightIntakeLauncher.getConfigurator().apply(rightLauncherConfig);
 
