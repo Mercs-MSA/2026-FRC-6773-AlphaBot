@@ -11,7 +11,7 @@ package frc.robot.subsystems;
 //import com.revrobotics.spark.config.SparkMaxConfig;
 //import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 //import com.revrobotics.spark.SparkMax;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.FuelConstants.INDEXER_EJECTING_SPEED;
 import static frc.robot.Constants.FuelConstants.INDEXER_INTAKING_SPEED;
 import static frc.robot.Constants.FuelConstants.INDEXER_MOTOR_CURRENT_LIMIT;
@@ -36,6 +36,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.units.LinearVelocityUnit;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -96,7 +97,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         new SysIdRoutine (
             new SysIdRoutine.Config(
                 null,
-                Volts.of(3),
+                Volts.of(7),
                 null,
 
                 state -> SignalLogger.writeString("rightIntakeLauncherState", state.toString())
@@ -112,7 +113,7 @@ public class CANFuelSubsystem extends SubsystemBase {
         new SysIdRoutine (
             new SysIdRoutine.Config(
                 null,
-                Volts.of(4),
+                Volts.of(5),
                 null,
 
                 state -> SignalLogger.writeString("indexerState", state.toString())
@@ -230,10 +231,10 @@ public class CANFuelSubsystem extends SubsystemBase {
 
 
     //Dynamic command for all 3 motors
-    public Command leftIndexerLauncherSysIdDynamic(SysIdRoutine.Direction direction) {
+    public Command leftIntakeLauncherSysIdDynamic(SysIdRoutine.Direction direction) {
         return m_SysIdRoutineLeftIntakeLauncher.dynamic(direction);
     }
-    public Command rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction direction) {
+    public Command rightIntakeLauncherSysIdDynamic(SysIdRoutine.Direction direction) {
         return m_SysIdRoutineRightIntakeLauncher.dynamic(direction);
     }
     public Command indexerSysIdDynamic(SysIdRoutine.Direction direction) {

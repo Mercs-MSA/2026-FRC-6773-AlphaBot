@@ -129,20 +129,20 @@ public class RobotContainer {
         testController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
 
         //Drivetrain SysId
-        testController.start().and(testController.a()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        testController.start().and(testController.b()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        testController.start().and(testController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        testController.start().and(testController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        testController.povDown().and(testController.a()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        testController.povDown().and(testController.b()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        testController.povDown().and(testController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        testController.povDown().and(testController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         //Left Indexer Launcher SysId
-        testController.povLeft().and(testController.a()).whileTrue(fuelSubsystem.leftIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kForward));
-        testController.povLeft().and(testController.b()).whileTrue(fuelSubsystem.leftIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kReverse));
+        testController.povLeft().and(testController.a()).whileTrue(fuelSubsystem.leftIntakeLauncherSysIdDynamic(SysIdRoutine.Direction.kForward));
+        testController.povLeft().and(testController.b()).whileTrue(fuelSubsystem.leftIntakeLauncherSysIdDynamic(SysIdRoutine.Direction.kReverse));
         testController.povLeft().and(testController.x()).whileTrue(fuelSubsystem.leftIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kForward));
         testController.povLeft().and(testController.y()).whileTrue(fuelSubsystem.leftIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         
         //Right Indexer Launcher SysId
-        testController.povRight().and(testController.a()).whileTrue(fuelSubsystem.rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kForward));
-        testController.povRight().and(testController.b()).whileTrue(fuelSubsystem.rightIndexerLauncherSysIdDynamic(SysIdRoutine.Direction.kReverse));
+        testController.povRight().and(testController.a()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdDynamic(SysIdRoutine.Direction.kForward));
+        testController.povRight().and(testController.b()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdDynamic(SysIdRoutine.Direction.kReverse));
         testController.povRight().and(testController.x()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kForward));
         testController.povRight().and(testController.y()).whileTrue(fuelSubsystem.rightIntakeLauncherSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
