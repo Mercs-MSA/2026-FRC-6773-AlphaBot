@@ -163,4 +163,8 @@ public class RobotContainer {
         final var idle = new SwerveRequest.Idle();
         return autoChooser.getSelected();
     }
+
+    public void periodic() {
+        drivetrain.updateWithLimelight("shooter_camera");
+    }
 }
