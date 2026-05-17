@@ -343,6 +343,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
+    public Pose2d goalPose = new Pose2d(91.06, 158.84, new Rotation2d(0)); //goalPose to shoot
+
     public void updateWithLimelight(String cameraname) {
         LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(cameraname);
         addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
