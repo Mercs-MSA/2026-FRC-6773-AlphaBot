@@ -177,7 +177,7 @@ public class CANFuelSubsystem extends SubsystemBase {
 
         TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
 
-        indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        indexerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         indexerConfig.CurrentLimits.SupplyCurrentLimit = INDEXER_MOTOR_CURRENT_LIMIT;
         indexerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
