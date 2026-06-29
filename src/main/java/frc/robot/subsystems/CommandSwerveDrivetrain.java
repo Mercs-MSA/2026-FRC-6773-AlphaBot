@@ -347,6 +347,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public void updateWithLimelight(String cameraname) {
         LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(cameraname);
+        if (mt1 == null) {
+            return;
+        }
         addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
     }
 }
